@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#10161c" />
+  <title>Steam Ping — новая игра друга в Discord</title>
+  <link rel="icon" href="/static/mark.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=3" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/">
+        <img src="/static/mark.svg" width="40" height="40" alt="" />
+        <span>
+          <strong>Steam Ping</strong>
+          <small>библиотека друга → Discord</small>
+        </span>
+      </a>
+      <div class="chips" id="chips" aria-label="Состояние"></div>
+    </header>
+
+    <div id="banners"></div>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Уведомления о библиотеке</p>
+        <h1>Новая игра в библиотеке друга приходит в Discord.</h1>
+        <p class="lede">
+          Процесс сам сверяет открытую библиотеку Steam. Новая игра уходит в Discord
+          без команд и без кнопки на этой странице. «Показать пример» только рисует карточку здесь.
+        </p>
+        <div class="hero-actions">
+          <button type="button" class="btn primary" id="simulate">Показать пример</button>
+          <button type="button" class="btn ghost" id="check">Проверить сейчас</button>
+          <button type="button" class="btn ghost" id="test-delivery" hidden>Проверить канал</button>
+          <a class="btn text" href="#setup">Как подключить</a>
+        </div>
+        <p class="fine">
+          Покупка, подарок и бесплатная раздача выглядят одинаково: Steam отдаёт
+          только факт, что игра теперь в библиотеке.
+        </p>
+      </div>
+      <div id="preview" class="preview-slot" aria-live="polite"></div>
+    </section>
+
+    <section class="panel auto-send" id="auto">
+      <div class="section-head">
+        <h2>Автоотправка</h2>
+      </div>
+      <p class="auto-state" id="auto-state">Проверяю, подключён ли канал.</p>
+      <form id="webhook-form" class="watch">
+        <label for="webhook-url">Вебхук канала Discord</label>
+        <div class="watch-row">
+          <input
+            id="webhook-url"
+            name="url"
+            type="password"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="https://discord.com/api/webhooks/…"
+            maxlength="300"
+          />
+          <button type="submit" class="btn primary" id="webhook-save">Включить</button>
+          <button type="button" class="btn ghost" id="webhook-clear" hidden>Выключить</button>
+        </div>
+        <p class="form-note">
+          Канал → Изменить канал → Интеграции → Вебхуки → Новый вебхук → Скопировать URL.
+          Адрес сохраняется на этой машине и в ответ панели не возвращается.
+          После включения сверка идёт сама, примерно раз в десять минут.
+        </p>
+        <p class="form-error" id="webhook-error" role="alert"></p>
+      </form>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="section-head">
+          <h2>Кого смотрю</h2>
+        </div>
+        <form id="watch-form" class="watch">
+          <label for="steam-query">Профиль Steam</label>
+          <div class="watch-row">
+            <input
+              id="steam-query"
+              name="query"
+              type="text"
+              inputmode="url"
+              autocomplete="off"
+              placeholder="https://steamcommunity.com/id/nickname"
+              maxlength="200"
+            />
+            <button type="submit" class="btn primary" id="watch-submit">Следить</button>
+          </div>
+          <p class="form-note" id="form-note"></p>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+        <div id="friends"></div>
+      </div>
+      <div class="panel">
+        <div class="section-head">
+          <h2>Лента</h2>
+        </div>
+        <div id="feed" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="setup" id="setup">
+      <div class="section-head">
+        <h2>Подключение</h2>
+      </div>
+      <ol>
+        <li>
+          <strong>Ключ Steam.</strong>
+          <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener">steamcommunity.com/dev/apikey</a>
+          — значение кладётся в <code>STEAM_API_KEY</code>. У друга в приватности должен быть открыт пункт «Сведения об играх».
+        </li>
+        <li>
+          <strong>Канал, который получает сообщения сам.</strong>
+          Создай вебхук и вставь его в блок «Автоотправка», либо пропиши <code>DISCORD_WEBHOOK_URL</code> и <code>WATCH_STEAM_IDS</code> в <code>.env</code>.
+          Процесс должен оставаться запущенным. Первая сверка запоминает текущие игры и молчит, следующие шлют только новые.
+        </li>
+        <li>
+          <strong>Бот с командами — по желанию.</strong>
+          <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Портал разработчика</a>
+          → Bot → Reset Token → <code>DISCORD_TOKEN</code>. Привилегированные интенты не нужны.
+          Для мгновенных команд укажи <code>DISCORD_GUILD_ID</code>. В канале: <code>/channel</code>, затем <code>/watch</code>.
+          <div id="invite" class="invite"></div>
+        </li>
+      </ol>
+    </section>
+  </div>
+  <div id="toast" class="toast" hidden role="status"></div>
+  <script src="/static/app.js?v=3"></script>
+</body>
+</html>
