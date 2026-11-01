@@ -22,6 +22,10 @@ cp .env.example .env
 python -m app
 ```
 
+```
+cd ~/minsktg2.beget.tech/steam-ping && ./start.sh
+```
+
 Панель: [http://127.0.0.1:8741](http://127.0.0.1:8741)
 
 Отправка уже автоматическая. Кнопка «Показать пример» только рисует карточку на панели и в Discord не пишет. Живой профиль проверяется в фоне: первая сверка запоминает библиотеку, дальше новая игра уходит в канал сама.
@@ -36,16 +40,16 @@ pytest
 
 ## Что положить в `.env`
 
-| Переменная | Зачем |
-| --- | --- |
-| `STEAM_API_KEY` | Ключ с [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) |
-| `DISCORD_TOKEN` | Токен бота с [портала Discord](https://discord.com/developers/applications) |
-| `DISCORD_GUILD_ID` | ID сервера, чтобы команды появились сразу, а не в течение часа |
-| `WATCH_STEAM_IDS` | Ссылки, vanity или SteamID64 через запятую |
-| `NOTIFY_CHANNEL_ID` | Канал, если не хочешь выбирать его командой `/channel` |
-| `DISCORD_WEBHOOK_URL` | Вебхук канала: вместе со списком друзей включает автоотправку |
-| `POLL_INTERVAL_SECONDS` | Пауза между сверками, по умолчанию 600, минимум 60 |
-| `DEMO_MODE` | `auto` оставляет пример, пока не заданы оба ключа |
+| Переменная              | Зачем                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `STEAM_API_KEY`         | Ключ с [steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey) |
+| `DISCORD_TOKEN`         | Токен бота с [портала Discord](https://discord.com/developers/applications)   |
+| `DISCORD_GUILD_ID`      | ID сервера, чтобы команды появились сразу, а не в течение часа                |
+| `WATCH_STEAM_IDS`       | Ссылки, vanity или SteamID64 через запятую                                    |
+| `NOTIFY_CHANNEL_ID`     | Канал, если не хочешь выбирать его командой `/channel`                        |
+| `DISCORD_WEBHOOK_URL`   | Вебхук канала: вместе со списком друзей включает автоотправку                 |
+| `POLL_INTERVAL_SECONDS` | Пауза между сверками, по умолчанию 600, минимум 60                            |
+| `DEMO_MODE`             | `auto` оставляет пример, пока не заданы оба ключа                             |
 
 Привилегированные интенты Discord не нужны. В приглашении должны быть scope `bot` и `applications.commands` и права писать в канал и вставлять ссылки. Готовая ссылка появляется на панели, когда токен на месте.
 
