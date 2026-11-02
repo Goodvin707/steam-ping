@@ -32,8 +32,8 @@ def game_message(event: dict) -> tuple[str, dict[str, Any]]:
         },
         "fields": [
             {
-                "name": "Что произошло",
-                "value": "Не было в прошлом снимке",
+                "name": "Вау!",
+                "value": "Новая видеоигра",
                 "inline": True,
             },
             {
