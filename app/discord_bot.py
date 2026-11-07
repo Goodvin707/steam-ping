@@ -25,7 +25,7 @@ class SteamPingBot(discord.Client):
             intents=discord.Intents.default(),
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name="библиотеки Steam",
+                name="Steam Libraries",
             ),
         )
         self.ctx = ctx
