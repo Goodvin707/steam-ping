@@ -383,6 +383,14 @@ h2 {
 
 .watch input:disabled { color: var(--muted); }
 
+.guild-row {
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .form-note, .form-error, .empty { margin: 8px 0 0; }
 .form-note, .empty { color: var(--muted); font-size: 14px; }
 .form-error { color: var(--danger); min-height: 1.2em; font-size: 14px; }

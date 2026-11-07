@@ -11,6 +11,7 @@ from app.service import (
     add_friend,
     auto_label,
     clear_webhook,
+    poll_all,
     poll_once,
     remove_friend,
     set_webhook,
@@ -77,6 +78,7 @@ def create_app(ctx) -> FastAPI:
                 live_friends=live_friends,
                 poll_interval_seconds=current.settings.poll_interval_seconds,
             ),
+            "guilds": await current.hub.summaries() if current.hub is not None else [],
         }
 
     @app.get("/api/friends")
@@ -130,7 +132,7 @@ def create_app(ctx) -> FastAPI:
     async def check(request: Request) -> dict:
         current = request.app.state.ctx
         try:
-            report = await poll_once(current)
+            report = await poll_all(current)
         except Exception as exc:
             raise HTTPException(status_code=500, detail="Проверка сорвалась. Подробность в логе.") from exc
         return {

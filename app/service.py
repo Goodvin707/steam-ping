@@ -223,6 +223,35 @@ async def simulate_purchase(ctx) -> dict:
     )
 
 
+async def poll_all(ctx) -> PollReport:
+    """Сверяет панель и каждый Discord-сервер, у которого уже есть своя база."""
+    hub = getattr(ctx, "hub", None)
+    if hub is None:
+        return await poll_once(ctx)
+    total = PollReport()
+    failed = 0
+    for scope in await hub.scopes(ctx):
+        try:
+            part = await poll_once(scope)
+        except Exception:
+            failed += 1
+            log.exception(
+                "Проверка базы %s сорвалась",
+                getattr(scope, "guild_id", None) or "панели",
+            )
+            continue
+        total.friends_checked += part.friends_checked
+        total.new_games += part.new_games
+        total.errors += part.errors
+        total.rebaselines += part.rebaselines
+        total.baselines += part.baselines
+    ctx.last_poll_at = time.time()
+    ctx.last_poll_error = (
+        "Часть серверов не проверилась. Подробность в логе." if failed else None
+    )
+    return total
+
+
 async def poll_once(ctx) -> PollReport:
     async with ctx.poll_lock:
         report = PollReport()

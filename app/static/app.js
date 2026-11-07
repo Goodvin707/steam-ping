@@ -90,6 +90,29 @@ function renderChips(status) {
   if (status.last_poll_at) {
     root.append(chip(`сверка ${formatTime(status.last_poll_at)}`));
   }
+  const guilds = status.guilds || [];
+  if (guilds.length > 1) {
+    root.append(chip(`Серверов: ${guilds.length}`));
+  }
+}
+
+function renderGuilds(status) {
+  const root = $("#guilds");
+  if (!root) return;
+  root.replaceChildren();
+  const extra = (status.guilds || []).filter((guild) => !guild.shared_with_panel);
+  if (!extra.length) return;
+  const note = document.createElement("p");
+  note.className = "form-note";
+  note.textContent = "У других серверов свои списки и свои снимки. Здесь их не видно и сюда их покупки не приходят.";
+  root.append(note);
+  for (const guild of extra) {
+    const row = document.createElement("p");
+    row.className = "guild-row";
+    const channel = guild.notify_channel_id ? "канал выбран" : "канал не выбран";
+    row.textContent = `${guild.name}: профилей ${guild.live_friends}, ${channel}`;
+    root.append(row);
+  }
 }
 
 function renderBanners(status) {
@@ -396,6 +419,7 @@ function render() {
   renderBanners(status);
   renderAuto(status);
   renderFriends(friends, status);
+  renderGuilds(status);
   renderFeed(events, status);
   renderPreview(events.find((event) => event.id === state.selectedId) || null, status);
   renderInvite(status);

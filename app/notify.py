@@ -32,8 +32,8 @@ def game_message(event: dict) -> tuple[str, dict[str, Any]]:
         },
         "fields": [
             {
-                "name": "Вау!",
-                "value": "Новая видеоигра",
+                "name": "Что произошло",
+                "value": "Не было в прошлом снимке",
                 "inline": True,
             },
             {
@@ -112,10 +112,11 @@ def test_message() -> tuple[str, dict[str, Any]]:
 
 
 class Notifier:
-    def __init__(self, db, http: httpx.AsyncClient, settings):
+    def __init__(self, db, http: httpx.AsyncClient, settings, *, inherit_env: bool = True):
         self.db = db
         self.http = http
         self.settings = settings
+        self.inherit_env = inherit_env
         self.bot = None
         self.send_lock = asyncio.Lock()
 
@@ -123,6 +124,8 @@ class Notifier:
         stored = await self.db.get_setting("discord_webhook_url")
         if stored is not None:
             return stored.strip()
+        if not self.inherit_env:
+            return ""
         return (self.settings.discord_webhook_url or "").strip()
 
     async def delivery_marker(self) -> str:
@@ -180,6 +183,8 @@ class Notifier:
         async with self.send_lock:
             where = await self.destination()
             if where == "panel":
+                if not self.inherit_env:
+                    return "Канал этого сервера ещё не выбран. Напиши /channel в нужном канале."
                 return (
                     "Канал ещё не выбран. На сервере напиши /channel "
                     "или укажи DISCORD_WEBHOOK_URL."
@@ -214,7 +219,7 @@ class Notifier:
         stored = await self.db.get_setting("notify_channel_id")
         if stored:
             return stored
-        if self.settings.notify_channel_id:
+        if self.inherit_env and self.settings.notify_channel_id:
             return str(self.settings.notify_channel_id)
         return None
 

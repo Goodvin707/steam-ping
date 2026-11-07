@@ -10,9 +10,9 @@ import uvicorn
 
 from app.config import load_settings
 from app.context import Context
-from app.db import Database
 from app.discord_bot import build_bot, run_bot
-from app.service import announce_if_needed, bootstrap, poll_once
+from app.hub import GuildHub
+from app.service import announce_if_needed, bootstrap, poll_all
 from app.steam import SteamClient
 from app.web import create_app
 
@@ -22,7 +22,7 @@ log = logging.getLogger("steam_ping")
 async def poll_loop(ctx: Context) -> None:
     while True:
         try:
-            report = await poll_once(ctx)
+            report = await poll_all(ctx)
             if ctx.settings.steam_enabled:
                 log.info(report.message(steam_enabled=True))
         except asyncio.CancelledError:
@@ -42,9 +42,16 @@ async def async_main() -> None:
         },
         follow_redirects=True,
     )
-    db = Database(settings.database_path)
-    await db.connect()
-    ctx = Context.create(settings=settings, db=db, http=http)
+    hub = GuildHub(settings, http)
+    local = await hub.start()
+    ctx = Context.create(
+        settings=settings,
+        db=local.db,
+        http=http,
+        hub=hub,
+        notifier=local.notifier,
+        poll_lock=local.poll_lock,
+    )
     if settings.steam_enabled:
         ctx.steam = SteamClient(settings.steam_api_key, http)
     await bootstrap(ctx)
@@ -93,7 +100,7 @@ async def async_main() -> None:
             with contextlib.suppress(asyncio.CancelledError, Exception):
                 await bot_task
         await http.aclose()
-        await db.close()
+        await hub.close()
 
 
 def main() -> None:

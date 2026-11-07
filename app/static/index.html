@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/styles.css?v=3" />
+  <link rel="stylesheet" href="/static/styles.css?v=4" />
 </head>
 <body>
   <div class="wrap">
@@ -101,6 +101,7 @@
           <p class="form-error" id="form-error" role="alert"></p>
         </form>
         <div id="friends"></div>
+        <div id="guilds"></div>
       </div>
       <div class="panel">
         <div class="section-head">
@@ -130,12 +131,13 @@
           <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Портал разработчика</a>
           → Bot → Reset Token → <code>DISCORD_TOKEN</code>. Привилегированные интенты не нужны.
           Для мгновенных команд укажи <code>DISCORD_GUILD_ID</code>. В канале: <code>/channel</code>, затем <code>/watch</code>.
+          У каждого сервера свой список и свои снимки библиотек: покупка, замеченная на одном, на другой не уходит.
           <div id="invite" class="invite"></div>
         </li>
       </ol>
     </section>
   </div>
   <div id="toast" class="toast" hidden role="status"></div>
-  <script src="/static/app.js?v=3"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
 </html>
